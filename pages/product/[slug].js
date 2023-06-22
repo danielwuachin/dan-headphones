@@ -104,7 +104,10 @@ export const getStaticPaths = async () => {
 }
 
 export const getStaticProps = async ({ params: { slug }}) => {
+  // get the first product of the array queried
   const query = `*[_type == "product" && slug.current == '${slug}'][0]`;
+
+  // get all products
   const productsQuery = '*[_type == "product"]'
   
   const product = await client.fetch(query);
@@ -112,8 +115,9 @@ export const getStaticProps = async ({ params: { slug }}) => {
 
   console.log(product);
 
+  // every 3600 seconds (1 hour), the page will be regenerated
   return {
-    props: { products, product }
+    props: { products, product }, revalidate: 3600
   }
 }
 

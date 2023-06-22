@@ -13,6 +13,7 @@ const Cart = () => {
   const { totalPrice, totalQuantities, cartItems, setShowCart, toggleCartItemQuanitity, onRemove } = useStateContext();
 
   const handleCheckout = async () => {
+    // get an instance of stripe to use for checkout
     const stripe = await getStripe();
 
     const response = await fetch('/api/stripe', {
@@ -29,6 +30,7 @@ const Cart = () => {
 
     toast.loading('Redirecting...');
 
+    // redirect to checkout with the session id
     stripe.redirectToCheckout({ sessionId: data.id });
   }
 
@@ -75,7 +77,7 @@ const Cart = () => {
                     <span className="minus" onClick={() => toggleCartItemQuanitity(item._id, 'dec') }>
                     <AiOutlineMinus />
                     </span>
-                    <span className="num" onClick="">{item.quantity}</span>
+                    <span className="num" >{item.quantity}</span>
                     <span className="plus" onClick={() => toggleCartItemQuanitity(item._id, 'inc') }><AiOutlinePlus /></span>
                   </p>
                   </div>

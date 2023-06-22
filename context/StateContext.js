@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { toast } from 'react-hot-toast';
 
 const Context = createContext();
@@ -13,6 +13,7 @@ export const StateContext = ({ children }) => {
   let foundProduct;
   let index;
 
+  // add to cart a new product or update the quantity of an existing product
   const onAdd = (product, quantity) => {
     const checkProductInCart = cartItems.find((item) => item._id === product._id);
     
@@ -47,21 +48,26 @@ export const StateContext = ({ children }) => {
   }
 
   const toggleCartItemQuanitity = (id, value) => {
-    foundProduct = cartItems.find((item) => item._id === id)
     index = cartItems.findIndex((product) => product._id === id);
-    const newCartItems = cartItems.filter((item) => item._id !== id)
+    if (index === -1) return;
+    
+    const updatedCartItems = [...cartItems];
+    const foundProduct = updatedCartItems[index];
 
     if(value === 'inc') {
-      setCartItems([...newCartItems, { ...foundProduct, quantity: foundProduct.quantity + 1 } ]);
+      foundProduct.quantity += 1;
       setTotalPrice((prevTotalPrice) => prevTotalPrice + foundProduct.price)
       setTotalQuantities(prevTotalQuantities => prevTotalQuantities + 1)
     } else if(value === 'dec') {
       if (foundProduct.quantity > 1) {
-        setCartItems([...newCartItems, { ...foundProduct, quantity: foundProduct.quantity - 1 } ]);
+        foundProduct.quantity -= 1;
         setTotalPrice((prevTotalPrice) => prevTotalPrice - foundProduct.price)
         setTotalQuantities(prevTotalQuantities => prevTotalQuantities - 1)
       }
     }
+
+    updatedCartItems.splice(index, 1, foundProduct);
+    setCartItems(updatedCartItems);
   }
 
   const incQty = () => {
@@ -99,5 +105,5 @@ export const StateContext = ({ children }) => {
     </Context.Provider>
   )
 }
-
+// to use the context in a component easily
 export const useStateContext = () => useContext(Context);
